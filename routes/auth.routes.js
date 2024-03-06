@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
+
 // ℹ️ Handles password encryption
 const bcrypt = require("bcrypt");
 
@@ -61,6 +62,7 @@ router.post("/signup", (req, res, next) => {
       return User.create({ email, password: hashedPassword, name });
     })
     .then((createdUser) => {
+      if (!createdUser) return;
       // Deconstruct the newly created user object to omit the password
       // We should never expose passwords publicly
       const { email, name, _id } = createdUser;
