@@ -5,7 +5,7 @@ const routeCommentSchema = new Schema(
   {
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     route: { type: mongoose.Schema.Types.ObjectId, ref: "Route" },
-    commentText: { type: String, required: [true, "Comment text is required"] },
+    textBody: { type: String, required: [true, "Comment text is required"] },
     //* TO-DO: Add placeholder image
     images: { type: [String], default: [] },
   },

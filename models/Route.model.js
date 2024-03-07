@@ -2,13 +2,15 @@ const { Schema, model } = require("mongoose");
 const mongoose = require('mongoose');
 
 const routeSchema = new Schema({
+  name: {type: String, required: [true, "Name is required"]},
   city: { type: String, required: [true, "City is required"] },
-  distance: { type: Number, required: [true, "Distance is required"] },
+  length: { type: Number, required: [true, "Length is required"] },
+  duration: {type: String, required: [true, "Durtion is required"]},
   intensity: { type: String },
+  type: {type: String},
   description: { type: String, required: [true, "Description is required"] },
-  startPoint: { type: String, required: [true, "Description is required"] },
-  endPoint: { type: String, required: [true, "Description is required"] },
-
+  map: {type: String},
+  image: {type: String},
   addedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   routeComments: [{ type: mongoose.Schema.Types.ObjectId, ref: "RouteComment" }],
   ratings: [{ type: mongoose.Schema.Types.ObjectId, ref: "RouteRating" }],

@@ -18,8 +18,9 @@ const userSchema = new Schema(
       type: String,
       required: [true, "Password is required."],
     },
-    createdRoutes: [{ type: mongoose.Schema.Types.ObjectId, ref: "Route" }],
-    createdHikes: [{ type: mongoose.Schema.Types.ObjectId, ref: "Hike" }],
+    routesCreated: [{ type: mongoose.Schema.Types.ObjectId, ref: "Route" }],
+    hikesCreated: [{ type: mongoose.Schema.Types.ObjectId, ref: "Hike" }],
+    hikesJoined: [{ type: mongoose.Schema.Types.ObjectId, ref: "Hike" }],
     ratingsGiven: [{ type: mongoose.Schema.Types.ObjectId, ref: "Rating" }],
     routeComments: [
       { type: mongoose.Schema.Types.ObjectId, ref: "RouteComment" },
