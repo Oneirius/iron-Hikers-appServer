@@ -175,11 +175,11 @@ router.post('/routes/create', (req, res, next)=>{
     Hike.create({name, description, route, date, startTime, creator: userId})
     .then((createdHike)=>{
       console.log("Created new hike ->", createdHike);
-      rest.status(201).json(createdHike);
+      res.status(201).json(createdHike);
     })
     .catch((error)=>{
       console.error('Error retrieving hikes joined ->', error);
-      res.status(500).json({errorMessage: "Failed to retrieve hikes joined"})
+      res.status(500).json({errorMessage: "Failed to create new hike"})
     });
   })
 
