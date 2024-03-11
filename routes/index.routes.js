@@ -180,7 +180,7 @@ router.post('/hikes/create', (req, res, next) => {
     })
     .catch((error) => {
       console.error('Error retrieving hikes joined ->', error);
-      res.status(500).json({ errorMessage: "Failed to retrieve hikes joined" })
+      res.status(500).json({errorMessage: "Failed to create new hike"})
     });
 })
 
