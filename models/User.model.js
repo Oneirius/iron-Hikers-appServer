@@ -21,7 +21,7 @@ const userSchema = new Schema(
     age: {type: Number},
     hobbies: {type: String},
     likes: {type: String},
-    additionalInfo: {type: String},
+    description: {type: String},
     routesCreated: [{ type: mongoose.Schema.Types.ObjectId, ref: "Route" }],
     hikesCreated: [{ type: mongoose.Schema.Types.ObjectId, ref: "Hike" }],
     hikesJoined: [{ type: mongoose.Schema.Types.ObjectId, ref: "Hike" }],
