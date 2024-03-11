@@ -22,6 +22,7 @@ const userSchema = new Schema(
     hobbies: {type: String},
     likes: {type: String},
     description: {type: String},
+    city: {type: String},
     routesCreated: [{ type: mongoose.Schema.Types.ObjectId, ref: "Route" }],
     hikesCreated: [{ type: mongoose.Schema.Types.ObjectId, ref: "Hike" }],
     hikesJoined: [{ type: mongoose.Schema.Types.ObjectId, ref: "Hike" }],

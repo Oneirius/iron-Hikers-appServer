@@ -39,6 +39,7 @@ router.get("/user", (req, res, next) => {
 // Update logged-in user info
 router.put("/user/update", (req, res, next) => {
   const { userId } = req.body;
+  console.log(req.body)
   User.findByIdAndUpdate(userId, req.body, { new: true })
     .then((updatedUser) => {
       console.log("Updated user info ->", updatedUser);
@@ -126,8 +127,6 @@ router.post('/routes/create', (req, res, next) => {
       res.status(500).json({ errorMessage: "Failed to create route" });
     })
 })
-<<<<<<< HEAD
-
 
   // Get Route info by Id
   router.get('/routes/:routeId', (req, res, next)=>{
@@ -135,20 +134,27 @@ router.post('/routes/create', (req, res, next) => {
     console.log(routeId)
     Route.findById(routeId)
     .then((foundRoute)=>{
-=======
-// Get Route info by Id
-router.get('/routes/:routeId', (req, res, next) => {
-  const { routeId } = req.params;
-  console.log(routeId)
-  Route.findById(routeId)
-    .then((foundRoute) => {
->>>>>>> bac69a896d46e636e24b1b0ad9a24f22249bc165
       console.log("Route found", foundRoute);
       res.status(200).json(foundRoute);
     })
     .catch((error) => {
       console.log("Failed to retrieve route", error);
       res.status(500).json({ errorMessage: "Failed to retrieve route" });
+    })
+})
+
+//Get routes by city
+router.get('/city/:city', (req, res, next) => {
+  const {city} = req.params;
+  console.log("City:", city);
+  Route.find({"city": {$regex: city}})
+    .then((foundCityRoutes) => {
+      console.log("City found", foundCityRoutes);
+      res.status(200).json(foundCityRoutes);
+    })
+    .catch((error) => {
+      console.log("Failed to retrieve city", error);
+      res.status(500).json({ errorMessage: "Failed to retrieve city" });
     })
 })
 
