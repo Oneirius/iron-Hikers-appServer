@@ -126,6 +126,8 @@ router.post('/routes/create', (req, res, next)=>{
     res.status(500).json({errorMessage: "Failed to create route"});
   })
 })
+
+
   // Get Route info by Id
   router.get('/routes/:routeId', (req, res, next)=>{
     const {routeId} = req.params;
@@ -182,5 +184,27 @@ router.post('/routes/create', (req, res, next)=>{
       res.status(500).json({errorMessage: "Failed to create new hike"})
     });
   })
+
+
+
+//join new Hike - Gavs
+router.post('/hikes/join/:hikeId', (req, res, next) => {
+  const { hikeId } = req.params;
+  console.log(hikeId)
+  Hike.findById(hikeId)
+    .then((foundHike) => {
+      console.log("Hike found", foundHike);
+      res.status(200).json(foundHike);
+    })
+    .catch((error) => {
+      console.log("Failed to retrieve route", error);
+      res.status(500).json({ errorMessage: "Failed to retrieve route" });
+    })
+})
+
+
+
+
+
 
 module.exports = router;
