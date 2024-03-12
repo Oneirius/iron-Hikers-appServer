@@ -75,10 +75,10 @@ router.get("/user/:userId", (req, res, next) => {
       //* TO-DO: NEED TO ADD THE OTHER USER INFO OTHER THAN PASSWORD
       //* TO-DO: Should we hide the user's email as well? We might not want
       //* to allow users to snoop on each other's email addresses
-      const { email, name, _id, age, hobbies, likes, description } = foundUser;
+      const { email, name, _id, age, hobbies, likes, description, city } = foundUser;
 
       // Create a new object that doesn't expose the password
-      const user = { email, name, _id, age, hobbies, likes, description};
+      const user = { email, name, _id, age, hobbies, likes, descriptiony, city};
 
       // Send a json response containing the user object
       res.status(201).json( user );
