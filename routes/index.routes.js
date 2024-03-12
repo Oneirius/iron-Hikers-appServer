@@ -236,20 +236,17 @@ router.get('/day/:date', (req, res, next) => {
 // Get Upcoming hikes
 router.get('/hikes/upcoming/:date', (req, res, next)=>{
   const {date} = req.params;
-  const arrayCutoff = 3;
   Hike.find({"date": {"$gte": date}}).sort({date: 1}).limit(3)
   .populate("route")  
   .then((foundHikes) => {
       res.status(200).json(foundHikes);
       
     })
-
     .catch((error) => {
       console.log("Failed to retrieve date", error);
       res.status(500).json({ errorMessage: "Failed to retrieve date" });
     })
 })
-
 
 
 //join new Hike - Gavs
