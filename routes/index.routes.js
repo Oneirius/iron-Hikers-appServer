@@ -240,6 +240,7 @@ router.post('/hikes/join/:hikeId', (req, res, next) => {
   const { hikeId } = req.params;
   console.log(hikeId)
   Hike.findById(hikeId)
+    .populate("route")
     .then((foundHike) => {
       console.log("Hike found", foundHike);
       res.status(200).json(foundHike);
