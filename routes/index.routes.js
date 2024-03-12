@@ -236,25 +236,11 @@ router.get('/day/:date', (req, res, next) => {
 // Get Upcoming hikes
 router.get('/hikes/upcoming/:date', (req, res, next)=>{
   const {date} = req.params;
-  const {cutoffDate} = req.body;
   const arrayCutoff = 3;
-  console.log("Start Date: ", date);
-  Hike.find({"date": {$regex: date}})
+  Hike.find({"date": {"$gte": date}}).sort({date: 1}).limit(3)
   .populate("route")  
   .then((foundHikes) => {
-    const filteredHikes = foundHikes.filter(obj => {
-      const hikeDate = obj.date;
-      return hikeDate >= cutoffDate;
-    })
-
-    filteredHikes.sort((a, b)=>{
-      const dateA = new Date(a.date);
-      const dateB = new Date(b.date);
-
-      return dateA - dateB;
-    })
-    const croppedHikes = filteredHikes.slice(0, arrayCutoff);
-      res.status(200).json(croppedHikes);
+      res.status(200).json(foundHikes);
       
     })
 
