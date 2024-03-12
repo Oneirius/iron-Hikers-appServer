@@ -78,7 +78,7 @@ router.get("/user/:userId", (req, res, next) => {
       const { email, name, _id, age, hobbies, likes, description, city } = foundUser;
 
       // Create a new object that doesn't expose the password
-      const user = { email, name, _id, age, hobbies, likes, descriptiony, city};
+      const user = { email, name, _id, age, hobbies, likes, description, city};
 
       // Send a json response containing the user object
       res.status(201).json( user );
