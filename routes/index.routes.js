@@ -221,9 +221,11 @@ router.get('/day/:date', (req, res, next) => {
   const {date} = req.params;
   console.log("Date: ", date);
   Hike.find({"date": {$regex: date}})
-    .then((foundHike) => {
-      console.log("Date found", foundHike);
-      res.status(200).json(foundHike);
+  .populate("route")  
+  .then((foundHikes) => {
+      console.log("Date found", foundHikes);
+      res.status(200).json(foundHikes);
+      
     })
     .catch((error) => {
       console.log("Failed to retrieve date", error);
