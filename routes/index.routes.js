@@ -301,7 +301,7 @@ router.put('/hikes/join/:hikeId', (req, res, next) => {
     )
     .populate("route")
     .then((foundHike) => {
-      console.log("Hike found", foundHike);
+      console.log("Hike found", foundHike.attendees);
       res.status(200).json(foundHike);
     })
     .catch((error) => {
@@ -371,6 +371,7 @@ router.get('/hikes/:hikeId', (req, res, next) => {
   Hike.findById(hikeId)
     .populate("createdBy")
     .populate("route")
+    .populate("attendees")
     .then((foundHike) => {
       console.log("Hike found", foundHike);
       res.status(200).json(foundHike);
