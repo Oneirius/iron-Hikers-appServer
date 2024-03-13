@@ -11,6 +11,7 @@ const hikeSchema = new Schema({
   creator: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   attendees: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   hikeComments: [{ type: mongoose.Schema.Types.ObjectId, ref: "HikeComment" }],
+  createdBy: {type: mongoose.Schema.Types.ObjectId, ref: "User"}
 });
 
 const Hike = model("Hike", hikeSchema);

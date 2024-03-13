@@ -36,7 +36,7 @@ router.get("/user", (req, res, next) => {
     })
 })
 
-// Update logged-in user info
+// Edit logged-in user info
 router.put("/user/update", (req, res, next) => {
   const { userId } = req.body;
   console.log(req.body)
@@ -158,6 +158,61 @@ router.get('/city/:city', (req, res, next) => {
     })
 })
 
+// Edit Route
+router.put('/routes/edit/:routeId', (req, res, next)=>{
+  const {routeId} = req.params;
+  const {clientId} = req.body;
+  console.log(req.body);
+  Route.findById(routeId)
+  .populate("addedBy")
+  .then((foundRoute)=>{
+     if (foundRoute.addedBy._id.toString() === clientId) {
+       return Route.findByIdAndUpdate(routeId, req.body, {new:true})
+    } 
+  })
+  .then((updatedRoute)=>{
+    if(!updatedRoute) {
+      res.status(403).json({errorMessage: "Not authorized to edit route"})
+    } else {
+      console.log('Route updated! ->', updatedRoute);
+      res.status(204).json(updatedRoute);
+    }
+  })  
+  .catch((error)=>{
+    console.log('Failed to update route ->', error);
+    res.status(500).json({errorMessage: 'Failed to update route info'})
+  })
+})
+
+// Delete Route
+router.delete('/routes/delete/:routeId', (req, res, next)=>{
+  const {routeId} = req.params;
+  const {clientId} = req.query;
+  console.log(req.params, req.query);
+  Route.findById(routeId)
+  .then((foundRoute)=>{
+    console.log(foundRoute);
+    if (foundRoute.addedBy._id.toString() === clientId) {
+      console.log("client and creator IDs match!")
+      return Route.findByIdAndDelete(routeId);
+    } else {
+      console.log("client and creator ID mismatch!", foundRoute.addedBy._id.toString(), clientId);
+    }
+  })
+  .then((deletedRoute)=>{
+    if (!deletedRoute){
+      res.status(403).json({errorMessage: 'Not authorized to delete route'})
+    } else {
+      console.log('Route deleted', deletedRoute)
+      res.status(200).json(deletedRoute);
+    }
+  })
+  .catch((error)=>{
+    console.log('Failed to delete route', error);
+    res.status(500).json({errorMessage: 'Failed to delete route'})
+  })
+})
+
 // ROUTE COMMENT ROUTES
 // Create new comment on route by Id
 //* THIS ROUTE PROBABLY NEEDS TO BE REPATHED, it likely conflicts with
@@ -190,7 +245,7 @@ router.post('/routes/comment/:routeId', (req, res, next) => {
 // Create new Hike
 router.post('/hikes/create', (req, res, next) => {
   const { name, description, route, date, startTime, userId } = req.body;
-  Hike.create({ name, description, route, date, startTime, creator: userId })
+  Hike.create({ name, description, route, date, startTime, createdBy: userId })
     .then((createdHike) => {
       console.log("Created new hike ->", createdHike);
       res.status(201).json(createdHike);
@@ -200,21 +255,6 @@ router.post('/hikes/create', (req, res, next) => {
       res.status(500).json({errorMessage: "Failed to create new hike"})
     });
 })
-
-//Get Hike info by ID
-router.get('/hikes/:hikeId', (req, res, next) => {
-  const { hikeId } = req.params;
-  Hike.findById(hikeId)
-    .then((foundHike) => {
-      console.log("Hike found", foundHike);
-      res.status(200).json(foundHike);
-    })
-    .catch((error) => {
-      console.log("Failed to retrieve hike", error);
-      res.status(500).json({ errorMessage: "Failed to retrieve hike" });
-    })
-})
-
 
 //Get month and year hikes
 router.get('/day/:date', (req, res, next) => {
@@ -248,11 +288,10 @@ router.get('/hikes/upcoming/:date', (req, res, next)=>{
     })
 })
 
-
 //join new Hike - Gavs
 router.post('/hikes/join/:hikeId', (req, res, next) => {
   const { hikeId } = req.params;
-  console.log(hikeId)
+  console.log(hikeId);
   Hike.findById(hikeId)
     .populate("route")
     .then((foundHike) => {
@@ -265,9 +304,88 @@ router.post('/hikes/join/:hikeId', (req, res, next) => {
     })
 })
 
+// Edit Hike
+router.put('/hikes/edit/:hikeId', (req, res, next)=>{
+  const {hikeId} = req.params;
+  const {clientId, name, description, route, date, startTime} = req.body;
+  console.log(req.body);
+  Hike.findById(hikeId)
+  .populate("createdBy")
+  .then((foundHike)=>{
+     if (foundHike.createdBy._id.toString() === clientId) {
+       return Hike.findByIdAndUpdate(hikeId, req.body, {new:true})
+    } 
+  })
+  .then((updatedHike)=>{
+    if(!updatedHike) {
+      res.status(403).json({errorMessage: "Not authorized to edit hike"})
+    } else {
+      console.log('Hike updated! ->', updatedHike);
+      res.status(204).json(updatedHike);
+    }
+  })  
+  .catch((error)=>{
+    console.log('Failed to update hike ->', error);
+    res.status(500).json({errorMessage: 'Failed to update hike info'})
+  })
+})
 
+// Delete Hike
+router.delete('/hikes/delete/:hikeId', (req, res, next)=>{
+  const {hikeId} = req.params;
+  const {clientId} = req.query;
+  console.log(req.params, req.query);
+  Hike.findById(hikeId)
+  .then((foundHike)=>{
+    console.log(foundHike);
+    if (foundHike.createdBy._id.toString() === clientId) {
+      console.log("client and creator IDs match!")
+      return Hike.findByIdAndDelete(hikeId);
+    } else {
+      console.log("client and creator ID mismatch!", foundHike.createdBy._id.toString(), clientId);
+    }
+  })
+  .then((deletedHike)=>{
+    if (!deletedHike){
+      res.status(403).json({errorMessage: 'Not authorized to delete hike'})
+    } else {
+      console.log('Hike deleted', deletedHike)
+      res.status(200).json(deletedHike);
+    }
+  })
+  .catch((error)=>{
+    console.log('Failed to delete hike', error);
+    res.status(500).json({errorMessage: 'Failed to delete hike'})
+  })
+})
 
+//Get Hike info by ID
+router.get('/hikes/:hikeId', (req, res, next) => {
+  const { hikeId } = req.params;
+  Hike.findById(hikeId)
+    .then((foundHike) => {
+      console.log("Hike found", foundHike);
+      res.status(200).json(foundHike);
+    })
+    .catch((error) => {
+      console.log("Failed to retrieve hike", error);
+      res.status(500).json({ errorMessage: "Failed to retrieve hike" });
+    })
+})
 
+//* Internal only - Add createdBy to all Hikes
+router.put('/hikes/add-creator', (req, res, next)=>{
+  const {createdBy} = req.body;
+  Hike.updateMany({}, {"createdBy": createdBy})
+  .then((updatedHikes)=>{
+    console.log('Hikes updated!', updatedHikes);
+    res.status(200).json(updatedHikes)
+  })
+  .catch((error)=>{
+    console.log('Failed to update Hikes');
+    res.status(500).json({errorMessage: 'Failed to update hikes'})
+  })
+})
 
 
 module.exports = router;
