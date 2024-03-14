@@ -122,7 +122,7 @@ router.post('/routes/create', (req, res, next) => {
   })
     .then((createdRoute) => {
       console.log("Route created ->", createdRoute);
-      res.status(200).json({ successMessage: "New route created!" });
+      res.status(200).json(createdRoute);
     })
     .catch((error) => {
       console.log("Failed to create route", error);
@@ -186,14 +186,12 @@ router.put('/routes/edit/:routeId', (req, res, next) => {
 })
 
 // Delete Route
-router.delete('/routes/delete/:routeId', (req, res, next) => {
+router.delete('/routes/delete/:routeId', isAuthenticated, (req, res, next) => {
   const { routeId } = req.params;
-  const { clientId } = req.query;
-  //console.log(req.params, req.query);
   Route.findById(routeId)
     .then((foundRoute) => {
       //console.log(foundRoute);
-      if (foundRoute.addedBy._id.toString() === clientId) {
+      if (foundRoute.addedBy._id.toString() === req.payload._id) {
         console.log("client and creator IDs match!")
         return Route.findByIdAndDelete(routeId);
       } else {
@@ -402,6 +400,19 @@ router.put('/hikes/add-creator', (req, res, next) => {
       console.log('Failed to update Hikes');
       res.status(500).json({ errorMessage: 'Failed to update hikes' })
     })
+})
+
+router.put('/routes/add-addedBy', (req, res, next) =>{
+  const{addedBy} = req.body;
+  Route.updateMany({}, {"addedBy": addedBy})
+  .then((updatedRoutes)=>{
+    console.log('Routes updated!', updatedRoutes);
+    res.status(200).json(updatedRoutes)
+  })
+  .catch((error)=>{
+    console.log('Failed to update Routes');
+      res.status(500).json({ errorMessage: 'Failed to update routes' })
+  })
 })
 
 
