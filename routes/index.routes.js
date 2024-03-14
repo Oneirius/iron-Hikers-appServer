@@ -44,7 +44,7 @@ router.put("/user/update", (req, res, next) => {
   User.findByIdAndUpdate(userId, req.body, { new: true })
     .then((updatedUser) => {
       console.log("Updated user info ->", updatedUser);
-      res.status(204).json(updatedUser);
+      res.status(200).json(updatedUser);
     })
     .catch((error) => {
       console.error("Error while updating user info ->", error);
@@ -176,7 +176,7 @@ router.put('/routes/edit/:routeId', (req, res, next) => {
         res.status(403).json({ errorMessage: "Not authorized to edit route" })
       } else {
         console.log('Route updated! ->', updatedRoute);
-        res.status(204).json(updatedRoute);
+        res.status(200).json(updatedRoute);
       }
     })
     .catch((error) => {
@@ -334,7 +334,7 @@ router.put('/hikes/edit/:hikeId', (req, res, next) => {
         res.status(403).json({ errorMessage: "Not authorized to edit hike" })
       } else {
         console.log('Hike updated! ->', updatedHike);
-        res.status(204).json(updatedHike);
+        res.status(200).json(updatedHike);
       }
     })
     .catch((error) => {
