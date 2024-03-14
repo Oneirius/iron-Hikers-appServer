@@ -7,6 +7,7 @@ const RouteRating = require("../models/RouteRating.model");
 const Hike = require("../models/Hike.model");
 const HikeComment = require("../models/HikeComment.model");
 
+const { isAuthenticated } = require("../middleware/jwt.middleware.js");
 
 router.get("/", (req, res, next) => {
   res.json("All good in here");
@@ -56,7 +57,8 @@ router.get("/user-hikes", (req, res, next) => {
   const { userId } = req.body;
   User.findById(userId)
     .then((foundUser) => {
-      //* TO-DO: Probably need to retrieve or send back only upcoming hikes
+      //* TO-DO: Need to populate the hikes
+      //* TO-DO: Only show hikes that are in the future: Hike.find({ "date": { "$gte": date } }).sort({ date: 1 }).limit(3)
       console.log("Retrieved hikes joined ->", foundUser.hikesJoined);
       res.status(200).json(foundUser.hikesJoined);
     })
@@ -251,7 +253,7 @@ router.post('/hikes/create', (req, res, next) => {
       res.status(201).json(createdHike);
     })
     .catch((error) => {
-      console.error('Error retrieving hikes joined ->', error);
+      console.error('Error creating new hike ->', error);
       res.status(500).json({ errorMessage: "Failed to create new hike" })
     });
 })
@@ -262,6 +264,7 @@ router.get('/day/:date', (req, res, next) => {
   console.log("Date: ", date);
   Hike.find({ "date": { $regex: date } })
     .populate("route")
+    .populate("attendees")
     .then((foundHikes) => {
       console.log("Date found", foundHikes);
       res.status(200).json(foundHikes);
@@ -289,6 +292,7 @@ router.get('/hikes/upcoming/:date', (req, res, next) => {
 })
 
 //join new Hike - Gavs
+//*TO-DO: Check the attendees array to see if the user is already added to it. If so, return an error message. This also gets addressed in the frontend, but the extra securtiy check is good here*//
 router.put('/hikes/join/:hikeId', (req, res, next) => {
   const { hikeId } = req.params;
   const {userId} = req.body;
@@ -302,7 +306,13 @@ router.put('/hikes/join/:hikeId', (req, res, next) => {
     .populate("route")
     .then((foundHike) => {
       console.log("Hike found", foundHike.attendees);
-      res.status(200).json(foundHike);
+      return User.findByIdAndUpdate(
+        userId, {$push: {"hikesJoined": foundHike._id}},
+        {new: true}
+        )
+      })
+      .then((updatedUser)=>{
+        res.status(200).json(updatedUser);
     })
     .catch((error) => {
       console.log("Failed to retrieve route", error);
@@ -337,14 +347,12 @@ router.put('/hikes/edit/:hikeId', (req, res, next) => {
 })
 
 // Delete Hike
-router.delete('/hikes/delete/:hikeId', (req, res, next) => {
+router.delete('/hikes/delete/:hikeId', isAuthenticated, (req, res, next) => {
   const { hikeId } = req.params;
-  const { clientId } = req.query;
-  console.log(req.params, req.query);
+  console.log(req.payload);
   Hike.findById(hikeId)
     .then((foundHike) => {
-      console.log(foundHike);
-      if (foundHike.createdBy._id.toString() === clientId) {
+      if (foundHike.createdBy._id.toString() === req.payload._id) {
         console.log("client and creator IDs match!")
         return Hike.findByIdAndDelete(hikeId);
       } else {

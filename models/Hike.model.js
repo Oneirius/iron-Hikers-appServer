@@ -8,7 +8,6 @@ const hikeSchema = new Schema({
   route: { type: mongoose.Schema.Types.ObjectId, ref: "Route", required: [true, "Route is required"] },
   date: { type: String, required: [true, "Date is required"] },
   startTime: { type: String, required: [true, "Time is required"] },
-  creator: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   attendees: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   hikeComments: [{ type: mongoose.Schema.Types.ObjectId, ref: "HikeComment" }],
   createdBy: {type: mongoose.Schema.Types.ObjectId, ref: "User"}
