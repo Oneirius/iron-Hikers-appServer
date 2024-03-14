@@ -347,6 +347,7 @@ router.put('/hikes/edit/:hikeId', (req, res, next) => {
 })
 
 // Delete Hike
+//*TO-DO: Need to remove the hike from the hikesJoined arrays for all attendees
 router.delete('/hikes/delete/:hikeId', isAuthenticated, (req, res, next) => {
   const { hikeId } = req.params;
   console.log(req.payload);
