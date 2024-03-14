@@ -20,7 +20,7 @@ router.get("/user", (req, res, next) => {
   const { userId } = req.body;
   User.findById(userId)
     .then((foundUser) => {
-      console.log(foundUser);
+     // console.log(foundUser);
       //* TO-DO: NEED TO ADD THE OTHER USER INFO OTHER THAN PASSWORD
       const { email, name, _id } = foundUser;
 
@@ -28,7 +28,7 @@ router.get("/user", (req, res, next) => {
       const user = { email, name, _id };
 
       // Send a json response containing the user object
-      console.log(user)
+      //console.log(user)
       res.status(201).json({ user: user });
     })
     .catch((error) => {
@@ -40,7 +40,7 @@ router.get("/user", (req, res, next) => {
 // Edit logged-in user info
 router.put("/user/update", (req, res, next) => {
   const { userId } = req.body;
-  console.log(req.body)
+  //console.log(req.body)
   User.findByIdAndUpdate(userId, req.body, { new: true })
     .then((updatedUser) => {
       console.log("Updated user info ->", updatedUser);
@@ -73,7 +73,7 @@ router.get("/user/:userId", (req, res, next) => {
   const { userId } = req.params;
   User.findById(userId)
     .then((foundUser) => {
-      console.log(foundUser);
+      //console.log(foundUser);
       //* TO-DO: NEED TO ADD THE OTHER USER INFO OTHER THAN PASSWORD
       //* TO-DO: Should we hide the user's email as well? We might not want
       //* to allow users to snoop on each other's email addresses
@@ -95,9 +95,9 @@ router.get("/user/:userId", (req, res, next) => {
 // Get all routes
 router.get('/routes', (req, res, next) => {
   Route.find()
-    .then((allProjects) => {
-      console.log(allProjects);
-      res.status(200).json(allProjects);
+    .then((allRoutes) => {
+      //console.log(allRoutes);
+      res.status(200).json(allRoutes);
     })
     .catch((error) => {
       console.error("Error retrieving routes", error);
@@ -133,7 +133,7 @@ router.post('/routes/create', (req, res, next) => {
 // Get Route info by Id
 router.get('/routes/:routeId', (req, res, next) => {
   const { routeId } = req.params;
-  console.log(routeId)
+  //console.log(routeId)
   Route.findById(routeId)
     .then((foundRoute) => {
       console.log("Route found", foundRoute);
@@ -148,7 +148,7 @@ router.get('/routes/:routeId', (req, res, next) => {
 //Get routes by city
 router.get('/city/:city', (req, res, next) => {
   const { city } = req.params;
-  console.log("City:", city);
+  //console.log("City:", city);
   Route.find({ "city": { $regex: city } })
     .then((foundCityRoutes) => {
       console.log("City found", foundCityRoutes);
@@ -164,7 +164,6 @@ router.get('/city/:city', (req, res, next) => {
 router.put('/routes/edit/:routeId', (req, res, next) => {
   const { routeId } = req.params;
   const { clientId } = req.body;
-  console.log(req.body);
   Route.findById(routeId)
     .populate("addedBy")
     .then((foundRoute) => {
@@ -190,10 +189,10 @@ router.put('/routes/edit/:routeId', (req, res, next) => {
 router.delete('/routes/delete/:routeId', (req, res, next) => {
   const { routeId } = req.params;
   const { clientId } = req.query;
-  console.log(req.params, req.query);
+  //console.log(req.params, req.query);
   Route.findById(routeId)
     .then((foundRoute) => {
-      console.log(foundRoute);
+      //console.log(foundRoute);
       if (foundRoute.addedBy._id.toString() === clientId) {
         console.log("client and creator IDs match!")
         return Route.findByIdAndDelete(routeId);
@@ -261,7 +260,7 @@ router.post('/hikes/create', (req, res, next) => {
 //Get month and year hikes
 router.get('/day/:date', (req, res, next) => {
   const { date } = req.params;
-  console.log("Date: ", date);
+  //console.log("Date: ", date);
   Hike.find({ "date": { $regex: date } })
     .populate("route")
     .populate("attendees")
@@ -296,7 +295,7 @@ router.get('/hikes/upcoming/:date', (req, res, next) => {
 router.put('/hikes/join/:hikeId', (req, res, next) => {
   const { hikeId } = req.params;
   const {userId} = req.body;
-  console.log(hikeId);
+  //console.log(hikeId);
 
    Hike.findByIdAndUpdate(
     { _id: hikeId },
@@ -305,7 +304,6 @@ router.put('/hikes/join/:hikeId', (req, res, next) => {
     )
     .populate("route")
     .then((foundHike) => {
-      console.log("Hike found", foundHike.attendees);
       return User.findByIdAndUpdate(
         userId, {$push: {"hikesJoined": foundHike._id}},
         {new: true}
@@ -323,12 +321,13 @@ router.put('/hikes/join/:hikeId', (req, res, next) => {
 // Edit Hike
 router.put('/hikes/edit/:hikeId', (req, res, next) => {
   const { hikeId } = req.params;
-  const { clientId, name, description, route, date, startTime } = req.body;
+  const { clientId, name, description, route, date, startTime, image } = req.body;
   console.log(req.body);
   Hike.findById(hikeId)
     .populate("createdBy")
     .then((foundHike) => {
       if (foundHike.createdBy._id.toString() === clientId) {
+        console.log("ID MATCH!")
         return Hike.findByIdAndUpdate(hikeId, req.body, { new: true })
       }
     })
@@ -350,7 +349,7 @@ router.put('/hikes/edit/:hikeId', (req, res, next) => {
 //*TO-DO: Need to remove the hike from the hikesJoined arrays for all attendees
 router.delete('/hikes/delete/:hikeId', isAuthenticated, (req, res, next) => {
   const { hikeId } = req.params;
-  console.log(req.payload);
+  //console.log(req.payload);
   Hike.findById(hikeId)
     .then((foundHike) => {
       if (foundHike.createdBy._id.toString() === req.payload._id) {
@@ -382,7 +381,7 @@ router.get('/hikes/:hikeId', (req, res, next) => {
     .populate("route")
     .populate("attendees")
     .then((foundHike) => {
-      console.log("Hike found", foundHike);
+      //console.log("Hike found", foundHike);
       res.status(200).json(foundHike);
     })
     .catch((error) => {
